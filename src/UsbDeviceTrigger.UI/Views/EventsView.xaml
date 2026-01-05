@@ -1,0 +1,122 @@
+<UserControl x:Class="UsbDeviceTrigger.UI.Views.EventsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewmodels="clr-namespace:UsbDeviceTrigger.UI.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodels:EventsViewModel}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="Événements récents"
+                           Style="{StaticResource SectionHeader}"/>
+
+                <Button Grid.Column="1"
+                        Content="📋 Copier les événements"
+                        Command="{Binding CopyEventsCommand}"
+                        Padding="15,8"
+                        FontSize="12"
+                        Background="#2196F3"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="5"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#1976D2"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="{Binding LastEvent}"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,10"/>
+
+                    <ListBox Grid.Row="1"
+                             x:Name="EventsListBox"
+                             ItemsSource="{Binding RecentEvents}"
+                             Height="300"
+                             BorderThickness="0"
+                             Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"
+                                           FontFamily="Consolas"
+                                           FontSize="12"
+                                           Padding="5"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copier cet événement" Click="CopySelectedEvent_Click"/>
+                                <MenuItem Header="Copier tous les événements" Command="{Binding CopyEventsCommand}"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Guide de démarrage rapide -->
+            <TextBlock Text="Démarrage rapide"
+                       Style="{StaticResource SectionHeader}"
+                       Margin="0,20,0,10"/>
+
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                        <Run Text="1." FontWeight="Bold"/>
+                        <Run Text="Allez dans 'Périphériques' pour ajouter un nouveau périphérique USB"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                        <Run Text="2." FontWeight="Bold"/>
+                        <Run Text="Sélectionnez le périphérique USB dans la liste"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                        <Run Text="3." FontWeight="Bold"/>
+                        <Run Text="Configurez les commandes à exécuter lors de la connexion/déconnexion"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="4." FontWeight="Bold"/>
+                        <Run Text="La surveillance démarre automatiquement et exécute les commandes"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

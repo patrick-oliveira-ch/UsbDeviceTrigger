@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "UsbDeviceTrigger.Core": {
+      "commandName": "Project"
+    },
+    "Profil 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Patri\\Softwares\\UsbDeviceTrigger\\UsbDeviceTrigger.sln"
+    },
+    "Profil 2": {
+      "commandName": "Executable"
+    }
+  }
+}

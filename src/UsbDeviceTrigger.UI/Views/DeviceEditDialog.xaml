@@ -1,0 +1,282 @@
+<Window x:Class="UsbDeviceTrigger.UI.Views.DeviceEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:UsbDeviceTrigger.UI.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewmodels:DeviceEditViewModel}"
+        Title="Éditer la configuration"
+        Height="600"
+        Width="700"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- En-tête -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
+            <StackPanel>
+                <TextBlock Text="Éditer la configuration"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="White"/>
+                <TextBlock Text="{Binding DeviceName}"
+                           FontSize="14"
+                           Foreground="#E3F2FD"
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Contenu -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20">
+                <!-- Commande de connexion -->
+                <TextBlock Text="🔌 Commande lors de la connexion"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#1976D2"
+                           Margin="0,0,0,10"/>
+
+                <Border Background="White"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Exécutable ou commande"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding OnConnectCommand, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Consolas"
+                                     Padding="8"
+                                     BorderBrush="#BDBDBD"
+                                     Margin="0,0,5,0"/>
+                            <Button Grid.Column="1"
+                                    Content="📁 Parcourir"
+                                    Command="{Binding BrowseConnectExecutableCommand}"
+                                    Padding="10,8"
+                                    Background="#E3F2FD"
+                                    Foreground="#1976D2"
+                                    BorderBrush="#BDBDBD"
+                                    BorderThickness="1"
+                                    Cursor="Hand"/>
+                        </Grid>
+
+                        <TextBlock Text="Arguments (optionnel)"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding OnConnectArguments, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas"
+                                 Padding="8"
+                                 BorderBrush="#BDBDBD"
+                                 TextWrapping="Wrap"
+                                 MinHeight="40"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Style de fenêtre"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding WindowStyles}"
+                                  SelectedItem="{Binding OnConnectWindowStyle}"
+                                  Padding="8"
+                                  BorderBrush="#BDBDBD"
+                                  Margin="0,0,0,10"/>
+
+                        <TextBlock Text="💡 Conseil: Sélectionne un .exe et choisis le style de fenêtre"
+                                   FontSize="11"
+                                   Foreground="#757575"
+                                   FontStyle="Italic"
+                                   Margin="0,0,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Commande de déconnexion -->
+                <TextBlock Text="🔌 Commande lors de la déconnexion"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#C62828"
+                           Margin="0,0,0,10"/>
+
+                <Border Background="White"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Exécutable ou commande"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding OnDisconnectCommand, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Consolas"
+                                     Padding="8"
+                                     BorderBrush="#BDBDBD"
+                                     Margin="0,0,5,0"/>
+                            <Button Grid.Column="1"
+                                    Content="📁 Parcourir"
+                                    Command="{Binding BrowseDisconnectExecutableCommand}"
+                                    Padding="10,8"
+                                    Background="#FFEBEE"
+                                    Foreground="#C62828"
+                                    BorderBrush="#BDBDBD"
+                                    BorderThickness="1"
+                                    Cursor="Hand"/>
+                        </Grid>
+
+                        <TextBlock Text="Arguments (optionnel)"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding OnDisconnectArguments, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas"
+                                 Padding="8"
+                                 BorderBrush="#BDBDBD"
+                                 TextWrapping="Wrap"
+                                 MinHeight="40"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Style de fenêtre"
+                                   FontSize="12"
+                                   Foreground="#666666"
+                                   Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding WindowStyles}"
+                                  SelectedItem="{Binding OnDisconnectWindowStyle}"
+                                  Padding="8"
+                                  BorderBrush="#BDBDBD"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Notes -->
+                <TextBlock Text="📝 Notes"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                <Border Background="White"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="15">
+                    <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="8"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             TextWrapping="Wrap"
+                             MinHeight="80"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"/>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Boutons d'action -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1"
+                        Content="Annuler"
+                        Command="{Binding CancelCommand}"
+                        Click="CancelButton_Click"
+                        Margin="0,0,10,0"
+                        Padding="20,10"
+                        FontSize="13"
+                        Background="#F5F5F5"
+                        Foreground="#424242"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="5"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#EEEEEE"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Grid.Column="2"
+                        Content="✓ Enregistrer"
+                        Command="{Binding ConfirmCommand}"
+                        Click="ConfirmButton_Click"
+                        Padding="20,10"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Background="#2196F3"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="5"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#1976D2"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

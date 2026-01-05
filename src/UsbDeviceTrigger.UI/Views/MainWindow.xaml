@@ -1,0 +1,172 @@
+<Window x:Class="UsbDeviceTrigger.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:viewModels="clr-namespace:UsbDeviceTrigger.UI.ViewModels"
+        mc:Ignorable="d"
+        Title="USB Device Trigger"
+        Height="600"
+        Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5"
+        StateChanged="Window_StateChanged"
+        Closing="Window_Closing">
+
+    <Grid>
+        <!-- System Tray Icon -->
+        <tb:TaskbarIcon x:Name="NotifyIcon"
+                        ToolTipText="USB Device Trigger"
+                        TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Ouvrir" Click="MenuOpen_Click"/>
+                    <MenuItem Header="{Binding IsMonitoring, Converter={StaticResource MonitoringTextConverter}}"
+                              Command="{Binding ToggleMonitoringCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Quitter" Click="MenuExit_Click"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#673AB7" Padding="20,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="USB Device Trigger"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   FontSize="14"
+                                   Foreground="#E1BEE7"
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="{Binding IsMonitoring, Converter={StaticResource MonitoringButtonTextConverter}}"
+                                Command="{Binding ToggleMonitoringCommand}"
+                                Background="White"
+                                Foreground="#673AB7"
+                                Margin="5"
+                                Width="120"
+                                Height="35"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Main Content -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Navigation Menu -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
+                    <StackPanel Margin="0,20,0,0">
+                        <Button Content="📱 Périphériques"
+                                HorizontalContentAlignment="Left"
+                                Padding="20,15"
+                                FontSize="14"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="NavDevices_Click"/>
+
+                        <Button Content="⚙ Paramètres"
+                                HorizontalContentAlignment="Left"
+                                Padding="20,15"
+                                FontSize="14"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="NavSettings_Click"/>
+
+                        <Button Content="📋 Événements"
+                                HorizontalContentAlignment="Left"
+                                Padding="20,15"
+                                FontSize="14"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="NavEvents_Click"/>
+
+                        <Separator Margin="10,20"/>
+
+                        <Button Content="❌ Quitter"
+                                HorizontalContentAlignment="Left"
+                                Padding="20,15"
+                                FontSize="14"
+                                Foreground="#D32F2F"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Command="{Binding ExitApplicationCommand}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Content Area -->
+                <Border Grid.Column="1" Padding="20">
+                    <Grid x:Name="ContentArea">
+                        <!-- Le contenu sera chargé dynamiquement via LoadDefaultView() -->
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="2"
+                    Background="#424242"
+                    Padding="15,10"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding StatusMessage}"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Ellipse Width="10" Height="10" Margin="0,0,5,0">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="#F44336"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMonitoring}" Value="True">
+                                            <Setter Property="Fill" Value="#4CAF50"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+
+                        <TextBlock Text="{Binding IsMonitoring, Converter={StaticResource MonitoringStatusConverter}}"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

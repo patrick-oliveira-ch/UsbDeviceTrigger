@@ -1,0 +1,192 @@
+<UserControl x:Class="UsbDeviceTrigger.UI.Views.DeviceListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header avec bouton d'ajout -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Périphériques USB configurés"
+                       Style="{StaticResource SectionHeader}"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="🔄 Actualiser"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource SecondaryButton}"/>
+
+                <Button Content="➕ Ajouter un périphérique"
+                        Command="{Binding AddDeviceCommand}"
+                        Style="{StaticResource PrimaryButton}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Liste des périphériques -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding DeviceConfigurations}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- En-tête avec nom et statut -->
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding Device.Name}"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold"/>
+
+                                        <TextBlock Margin="0,5,0,0">
+                                            <Run Text="VID:"/>
+                                            <Run Text="{Binding Device.VendorId}" FontWeight="SemiBold"/>
+                                            <Run Text=" | PID:"/>
+                                            <Run Text="{Binding Device.ProductId}" FontWeight="SemiBold"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <!-- Toggle Enable/Disable -->
+                                        <CheckBox IsChecked="{Binding IsEnabled}"
+                                                  ToolTip="Activer/Désactiver"
+                                                  Command="{Binding DataContext.ToggleEnabledCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  CommandParameter="{Binding}"
+                                                  Margin="10,0"/>
+
+                                        <!-- Bouton éditer -->
+                                        <Button Content="✏"
+                                                ToolTip="Éditer"
+                                                Foreground="#1976D2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                FontSize="18"
+                                                Width="35"
+                                                Height="35"
+                                                Cursor="Hand"
+                                                Margin="5,0"
+                                                Command="{Binding DataContext.EditDeviceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"/>
+
+                                        <!-- Bouton supprimer -->
+                                        <Button Content="🗑"
+                                                ToolTip="Supprimer"
+                                                Foreground="#D32F2F"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                FontSize="18"
+                                                Width="35"
+                                                Height="35"
+                                                Cursor="Hand"
+                                                Command="{Binding DataContext.DeleteDeviceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Commandes -->
+                                <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                                    <!-- Commande de connexion -->
+                                    <Border Background="#E3F2FD"
+                                            Padding="10"
+                                            CornerRadius="4"
+                                            Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="🔌 Lors de la connexion:"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#1976D2"
+                                                       Margin="0,0,0,5"/>
+
+                                            <TextBlock FontFamily="Consolas"
+                                                       FontSize="12"
+                                                       TextWrapping="Wrap">
+                                                <Run Text="{Binding OnConnectCommand.Command, TargetNullValue='(Aucune commande)'}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding OnConnectCommand.Arguments}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Commande de déconnexion -->
+                                    <Border Background="#FFEBEE"
+                                            Padding="10"
+                                            CornerRadius="4">
+                                        <StackPanel>
+                                            <TextBlock Text="🔌 Lors de la déconnexion:"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#C62828"
+                                                       Margin="0,0,0,5"/>
+
+                                            <TextBlock FontFamily="Consolas"
+                                                       FontSize="12"
+                                                       TextWrapping="Wrap">
+                                                <Run Text="{Binding OnDisconnectCommand.Command, TargetNullValue='(Aucune commande)'}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding OnDisconnectCommand.Arguments}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Notes -->
+                                <TextBlock Grid.Row="2"
+                                           Text="{Binding Notes}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,10,0,0"
+                                           FontStyle="Italic"
+                                           Foreground="#666666"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Message si aucun périphérique -->
+        <StackPanel Grid.Row="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DeviceConfigurations.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="📱" FontSize="72" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <TextBlock Text="Aucun périphérique configuré"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+
+            <TextBlock Text="Cliquez sur 'Ajouter un périphérique' pour commencer"
+                       FontSize="14"
+                       Foreground="#666666"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
