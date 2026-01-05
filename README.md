@@ -12,6 +12,20 @@ Application Windows permettant d'exécuter automatiquement des commandes lors de
 - ✅ Notifications des événements
 - ✅ Journalisation des exécutions
 
+## 📸 Aperçu
+
+### Interface principale
+![Fenêtre principale](docs/images/main-window.png)
+
+### Configuration d'un périphérique
+![Configuration de périphérique](docs/images/device-config.png)
+
+### Paramètres
+![Paramètres](docs/images/settings.png)
+
+### Journal des événements
+![Journal des événements](docs/images/events.png)
+
 ## Prérequis
 
 - **Système d'exploitation**: Windows 10 ou Windows 11 (64-bit)
