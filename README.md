@@ -1,4 +1,4 @@
-# USB Device Trigger
+# USB Device Trigger by PatApps
 
 Application Windows permettant d'exécuter automatiquement des commandes lors de la connexion ou déconnexion de périphériques USB.
 

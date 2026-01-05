@@ -3,7 +3,7 @@
 
 #define MyAppName "USB Device Trigger"
 #define MyAppVersion "1.0.0"
-#define MyAppPublisher "USB Device Trigger"
+#define MyAppPublisher "PatApps"
 #define MyAppURL "https://github.com/patrick-oliveira-ch/UsbDeviceTrigger"
 #define MyAppExeName "UsbDeviceTrigger.UI.exe"
 
