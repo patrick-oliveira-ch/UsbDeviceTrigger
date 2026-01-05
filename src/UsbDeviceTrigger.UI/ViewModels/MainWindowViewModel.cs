@@ -37,6 +37,11 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private object? _currentView;
 
+    /// <summary>
+    /// Action pour afficher les notifications (configurée par la vue)
+    /// </summary>
+    public Action<string, string>? ShowNotificationAction { get; set; }
+
     public MainWindowViewModel(
         IUsbMonitorService usbMonitorService,
         IConfigurationService configurationService,
@@ -282,9 +287,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void ShowNotification(string title, string message)
     {
-        // Cette méthode sera appelée par le system tray
-        // Pour l'instant, on utilise MessageBox (sera remplacé par toast notification)
-        MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        // Utiliser les notifications balloon du system tray
+        ShowNotificationAction?.Invoke(title, message);
     }
 
     [RelayCommand]

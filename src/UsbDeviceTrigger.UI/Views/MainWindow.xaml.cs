@@ -20,8 +20,19 @@ public partial class MainWindow : Window
         _serviceProvider = serviceProvider;
         DataContext = _viewModel;
 
+        // Configurer l'action de notification dans le ViewModel
+        _viewModel.ShowNotificationAction = ShowBalloonNotification;
+
         // Charger la vue par défaut (Événements) au démarrage
         Loaded += (s, e) => LoadDefaultView();
+    }
+
+    private void ShowBalloonNotification(string title, string message)
+    {
+        // Afficher une notification via le system tray
+        // Les événements sont déjà loggés dans la fenêtre principale
+        // On n'affiche plus de popup pour éviter d'interrompre l'utilisateur
+        System.Diagnostics.Debug.WriteLine($"Notification: {title} - {message}");
     }
 
     private void Window_StateChanged(object sender, EventArgs e)

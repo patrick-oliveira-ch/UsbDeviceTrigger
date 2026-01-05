@@ -76,31 +76,116 @@ Filename: "{app}\{#MyAppExeName}"; Description: "Lancer {#MyAppName}"; Flags: no
 Type: filesandordirs; Name: "{userappdata}\UsbDeviceTrigger"
 
 [Code]
-// Vérification de .NET 8.0 Desktop Runtime
+const
+  DotNetRuntimeURL = 'https://download.visualstudio.microsoft.com/download/pr/9d6b6b34-44b5-4cf4-b924-79a00deb9795/2f17c30bdf42b6a8950a8552438cf8c1/windowsdesktop-runtime-8.0.11-win-x64.exe';
+  DotNetRuntimeFile = 'windowsdesktop-runtime-8.0.11-win-x64.exe';
+
+// Vérification de .NET 8.0 Desktop Runtime via dotnet.exe
 function IsDotNetInstalled(): Boolean;
 var
   ResultCode: Integer;
-  DotNetVersion: String;
+  Output: AnsiString;
+  TempFile: String;
 begin
-  // Essayer de détecter .NET 8.0 via le registre
-  if RegQueryStringValue(HKLM, 'SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost', '8.0', DotNetVersion) then
+  Result := False;
+
+  // Méthode 1: Essayer d'exécuter dotnet --list-runtimes
+  TempFile := ExpandConstant('{tmp}\dotnet-check.txt');
+  if Exec('cmd.exe', '/c dotnet --list-runtimes > "' + TempFile + '" 2>&1', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+  begin
+    if LoadStringFromFile(TempFile, Output) then
+    begin
+      // Chercher "Microsoft.WindowsDesktop.App 8."
+      if Pos('Microsoft.WindowsDesktop.App 8.', Output) > 0 then
+      begin
+        Result := True;
+        DeleteFile(TempFile);
+        Exit;
+      end;
+    end;
+    DeleteFile(TempFile);
+  end;
+
+  // Méthode 2: Vérifier les dossiers d'installation
+  if DirExists(ExpandConstant('{pf}\dotnet\shared\Microsoft.WindowsDesktop.App\8.0')) or
+     DirExists(ExpandConstant('{pf}\dotnet\shared\Microsoft.WindowsDesktop.App')) then
   begin
     Result := True;
-  end
-  else if RegQueryStringValue(HKLM, 'SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedhost', '8.0', DotNetVersion) then
+  end;
+end;
+
+// Télécharger .NET Runtime
+function DownloadDotNetRuntime(): Boolean;
+var
+  DownloadPage: TDownloadWizardPage;
+begin
+  DownloadPage := CreateDownloadPage('Téléchargement de .NET 8.0', 'Téléchargement du .NET 8.0 Desktop Runtime...', nil);
+  DownloadPage.Clear;
+  DownloadPage.Add(DotNetRuntimeURL, DotNetRuntimeFile, '');
+
+  DownloadPage.Show;
+  try
+    try
+      DownloadPage.Download;
+      Result := True;
+    except
+      if DownloadPage.AbortedByUser then
+        Log('Download aborted by user.')
+      else
+        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+      Result := False;
+    end;
+  finally
+    DownloadPage.Hide;
+  end;
+end;
+
+// Installer .NET Runtime
+function InstallDotNetRuntime(): Boolean;
+var
+  ResultCode: Integer;
+  InstallerPath: String;
+begin
+  InstallerPath := ExpandConstant('{tmp}\' + DotNetRuntimeFile);
+
+  if not FileExists(InstallerPath) then
   begin
-    Result := True;
+    MsgBox('Le fichier d''installation de .NET n''a pas été téléchargé correctement.', mbError, MB_OK);
+    Result := False;
+    Exit;
+  end;
+
+  if MsgBox('L''installation de .NET 8.0 Desktop Runtime va maintenant commencer.' + #13#10 + #13#10 +
+            'Cela peut prendre quelques minutes. Voulez-vous continuer ?',
+            mbConfirmation, MB_YESNO) = IDNO then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // Installer silencieusement
+  if Exec(InstallerPath, '/install /quiet /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+  begin
+    if ResultCode = 0 then
+    begin
+      Result := True;
+      MsgBox('.NET 8.0 Desktop Runtime a été installé avec succès !', mbInformation, MB_OK);
+    end
+    else
+    begin
+      MsgBox('L''installation de .NET 8.0 a échoué (Code: ' + IntToStr(ResultCode) + ').' + #13#10 +
+             'Veuillez l''installer manuellement depuis https://dotnet.microsoft.com', mbError, MB_OK);
+      Result := False;
+    end;
   end
   else
   begin
+    MsgBox('Impossible de lancer l''installateur .NET.', mbError, MB_OK);
     Result := False;
   end;
 end;
 
 function InitializeSetup(): Boolean;
-var
-  ErrorCode: Integer;
-  DotNetURL: String;
 begin
   Result := True;
 
@@ -108,13 +193,29 @@ begin
   begin
     if MsgBox('.NET 8.0 Desktop Runtime est requis pour exécuter cette application.' + #13#10 + #13#10 +
               'Voulez-vous télécharger et installer .NET 8.0 Desktop Runtime maintenant?' + #13#10 + #13#10 +
-              'Note: L''installation nécessitera une connexion Internet et des privilèges administrateur.',
+              'Taille du téléchargement: ~55 MB' + #13#10 +
+              'Une connexion Internet est requise.',
               mbConfirmation, MB_YESNO) = IDYES then
     begin
-      DotNetURL := 'https://dotnet.microsoft.com/download/dotnet/8.0/runtime';
-      ShellExec('open', DotNetURL, '', '', SW_SHOW, ewNoWait, ErrorCode);
-      Result := False;
-      MsgBox('Veuillez installer .NET 8.0 Desktop Runtime, puis relancer cet installateur.', mbInformation, MB_OK);
+      // Télécharger
+      if not DownloadDotNetRuntime() then
+      begin
+        Result := False;
+        Exit;
+      end;
+
+      // Installer
+      if not InstallDotNetRuntime() then
+      begin
+        Result := False;
+        Exit;
+      end;
+
+      // Vérifier à nouveau
+      if not IsDotNetInstalled() then
+      begin
+        MsgBox('L''installation de .NET semble avoir échoué. L''application pourrait ne pas fonctionner correctement.', mbError, MB_OK);
+      end;
     end
     else
     begin
