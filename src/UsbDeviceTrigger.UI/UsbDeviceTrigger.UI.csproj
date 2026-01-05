@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\Icons\usb-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UsbDeviceTrigger.Core\UsbDeviceTrigger.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\usb-icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\Icons\GenerateIcon.cs" />
+    <Compile Remove="Resources\Icons\IconGen\Program.cs" />
   </ItemGroup>
 
 </Project>

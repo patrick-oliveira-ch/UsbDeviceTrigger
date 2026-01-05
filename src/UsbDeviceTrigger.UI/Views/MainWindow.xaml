@@ -17,6 +17,7 @@
     <Grid>
         <!-- System Tray Icon -->
         <tb:TaskbarIcon x:Name="NotifyIcon"
+                        IconSource="/Resources/Icons/usb-icon.ico"
                         ToolTipText="USB Device Trigger by PatApps"
                         TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
