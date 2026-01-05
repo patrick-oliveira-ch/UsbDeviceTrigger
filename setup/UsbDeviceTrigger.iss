@@ -1,8 +1,8 @@
 ; Script Inno Setup pour USB Device Trigger
-; Version 1.0.0
+; Version 1.0.1
 
 #define MyAppName "USB Device Trigger"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "PatApps"
 #define MyAppURL "https://github.com/patrick-oliveira-ch/UsbDeviceTrigger"
 #define MyAppExeName "UsbDeviceTrigger.UI.exe"
